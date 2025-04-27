@@ -13,7 +13,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long EXPIRATION_TIME = 1000 * 60 * 60 *24;
+    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 24;
 
     public String generateToken(UserEntity user){
         return Jwts.builder()
@@ -23,6 +23,7 @@ public class JwtUtil {
                 .signWith(key)
                 .compact();
     }
+
     public String extractUsername(String token) {
         return Jwts.parser()
                 .setSigningKey(key)
@@ -30,11 +31,6 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
-    }
-
-    public boolean isTokenValid(String token ,UserEntity user){
-        String username = extractUsername(token);
-        return username.equals(user.getEmail()) && !isTokenExpired(token);
     }
 
     public boolean isTokenExpired(String token){
@@ -45,5 +41,10 @@ public class JwtUtil {
                 .getBody()
                 .getExpiration();
         return expirationDate.before(new Date());
+    }
+
+    public boolean isTokenValid(String token ,UserEntity user){
+        String username = extractUsername(token);
+        return username.equals(user.getEmail()) && !isTokenExpired(token);
     }
 }
