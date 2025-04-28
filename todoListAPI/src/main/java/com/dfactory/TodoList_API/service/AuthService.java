@@ -1,8 +1,8 @@
 package com.dfactory.TodoList_API.service;
 
 import com.dfactory.TodoList_API.dto.LoginRequest;
-import com.dfactory.TodoList_API.dto.LoginResponse;
 import com.dfactory.TodoList_API.dto.RegisterRequest;
+import com.dfactory.TodoList_API.dto.TokenResponse;
 import com.dfactory.TodoList_API.repository.UserRepository;
 import com.dfactory.TodoList_API.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public LoginResponse register(RegisterRequest request){
+    public TokenResponse register(RegisterRequest request){
         if (userRepository.existsByEmail(request.getEmail())){
             throw new RuntimeException("Email is already registered");
         }
@@ -42,17 +42,17 @@ public class AuthService {
         userRepository.save(user);
 
         String token = jwtUtil.generateToken(user);
-        return new LoginResponse(token);
+        return new TokenResponse(token);
     }
 
-    public LoginResponse login(LoginRequest request){
+    public TokenResponse login(LoginRequest request){
         UserEntity user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("Email o Password is incorrect"));
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
             throw new RuntimeException("Email o Password is incorrect");
         }
 
         String token = jwtUtil.generateToken(user);
-        return new LoginResponse(token);
+        return new TokenResponse(token);
     }
 
 }
