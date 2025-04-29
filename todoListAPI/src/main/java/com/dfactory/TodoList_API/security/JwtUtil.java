@@ -1,19 +1,30 @@
 package com.dfactory.TodoList_API.security;
 
 import com.dfactory.TodoList_API.model.UserEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 
 
 @Component
 public class JwtUtil {
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final Key key;
     private final long EXPIRATION_TIME = 1000 * 60 * 60 * 24;
+
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
+        try {
+            System.out.println("JWT Secret (raw): " + secret); // DEBUG
+            byte[] decodeKey = Base64.getDecoder().decode(secret);
+            this.key = Keys.hmacShaKeyFor(decodeKey);
+        } catch(Exception e){
+            e.printStackTrace(); // Mostrar error exacto
+            throw new RuntimeException("Failed to initialize JWT key");
+        }
+    }
 
     public String generateToken(UserEntity user){
         return Jwts.builder()

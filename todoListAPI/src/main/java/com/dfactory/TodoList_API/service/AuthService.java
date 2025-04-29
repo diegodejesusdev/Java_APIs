@@ -8,18 +8,7 @@ import com.dfactory.TodoList_API.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import com.dfactory.TodoList_API.model.UserEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
-
-@Configuration
-class SecurityConfig {
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-}
 
 @Service
 @RequiredArgsConstructor
